@@ -9,21 +9,26 @@ pipeline {
   stages {
     stage('Dependencies') {
       parallel {
-        stage('Dependencies') {
+        stage('npm install') {
           steps {
             sh 'npm ci'
-          }
-        }
-        stage('Other Dep') {
-          steps {
-            echo 'Hello'
           }
         }
       }
     }
     stage('Build') {
-      steps {
-        sh 'npm run build'
+      failFast true
+      parallel {
+        stage('npm run build') {
+          steps {
+            sh 'npm run build'
+          }
+        }
+        stage('npm run lint') {
+          steps {
+            sh 'npm run lint'
+          }
+        }
       }
     }
   }
