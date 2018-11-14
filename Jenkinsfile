@@ -4,14 +4,21 @@ pipeline {
       image 'node:10-alpine'
       args '-p 3000:3000'
     }
-  }
-  environment {
-    CI = 'true'
+
   }
   stages {
     stage('Dependencies') {
-      steps {
-        sh 'npm ci'
+      parallel {
+        stage('Dependencies') {
+          steps {
+            sh 'npm ci'
+          }
+        }
+        stage('Other Dep') {
+          steps {
+            echo 'Hello'
+          }
+        }
       }
     }
     stage('Build') {
@@ -19,5 +26,8 @@ pipeline {
         sh 'npm run build'
       }
     }
+  }
+  environment {
+    CI = 'true'
   }
 }
